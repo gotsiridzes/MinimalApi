@@ -4,8 +4,9 @@
 2. Callback (webhooks)
 3. Persistent connection
    * WebSockets/SignalR
+   * 
 ## Asynchronous Request Reply
-Client            Start Endpoint    Status Endpoint   Final Endpoint
+Client            Start Endpoint    Status Endpoint   Final Endpoint </br>
 ####################################################################
       POST ------>
       <-- HTTP 202
