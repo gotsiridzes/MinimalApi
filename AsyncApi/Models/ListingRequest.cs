@@ -1,4 +1,4 @@
-﻿namespace AsyncApi.Models;
+﻿namespace MinimalApi.Models;
 
 public class ListingRequest
 {

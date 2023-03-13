@@ -1,7 +1,7 @@
-﻿using AsyncApi.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using MinimalApi.Models;
 
-namespace AsyncApi.Data;
+namespace MinimalApi.Data;
 
 public class AppDbContext : DbContext
 {
