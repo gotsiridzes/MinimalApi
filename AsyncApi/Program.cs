@@ -1,4 +1,5 @@
 using AsyncApi.Data;
+using AsyncApi.Models;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,34 +7,23 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddDbContext<AppDbContext>(ops => ops.UseInMemoryDatabase("SampleRequests"));
+builder.Services.AddDbContext<AppDbContext>(ops =>
+	ops.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 var app = builder.Build();
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
+app.MapPost("api/v1/products", async (AppDbContext context, ListingRequest? request) =>
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+	if (request is null) return Results.BadRequest();
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
+	request.RequestStatus = "ACCEPT";
+	request.EstimatedCompletionTime = "2023-03-13:16:38";
+
+	await context.ListingRequests.AddAsync(request);
+
+	await context.SaveChangesAsync();
+	return Results.Accepted($"api/v1/productstatus/{request.RequestId}", request);
+});
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
